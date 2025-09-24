@@ -61,9 +61,10 @@
 
 ########################################################################
 
-PYTHONBUILDDIR=$(shell python -c 'from distutils import sysconfig, util ; \
-	print("lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
+PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util, sys; \
+	print("lib.%s-%s-%s" \
+		% (util.get_platform(), sys.implementation.name, \
+                   "".join(map(str, sys.version_info[:2]))))')
 
 .PHONY: all build_tileEngine build_cellEngine doxygen
 
@@ -72,7 +73,7 @@ PYTHONBUILDDIR=$(shell python -c 'from distutils import sysconfig, util ; \
 all: build_tileEngine build_cellEngine build_micropolisEngine
 
 clean:
-	rm -rf *~ *.suo *.ncb *.pyc *.pyo build 
+	rm -rf *~ *.suo *.ncb *.pyc *.pyo build
 	echo DISABLED rm -rf html doxygen_warnings
 	cd TileEngine ; make clean
 	cd CellEngine ; make clean
@@ -103,7 +104,7 @@ TILEENGINEDEST = pyMicropolis/tileEngine
 build_tileEngine:
 	$(MAKE) -C TileEngine build_python
 	cp TileEngine/objs/tileengine.py $(TILEENGINEDEST)
-	cp TileEngine/objs/$(PYTHONBUILDDIR)/_tileengine.so $(TILEENGINEDEST)
+	cp TileEngine/objs/$(PYTHONBUILDDIR)/*.so $(TILEENGINEDEST)
 
 # ----------------------------------------------------------------------
 # build/install cellEngine
@@ -113,7 +114,7 @@ CELLENGINEDEST = pyMicropolis/cellEngine
 build_cellEngine:
 	$(MAKE) -C CellEngine build_python
 	cp CellEngine/objs/cellengine.py $(CELLENGINEDEST)
-	cp CellEngine/objs/$(PYTHONBUILDDIR)/_cellengine.so $(CELLENGINEDEST)
+	cp CellEngine/objs/$(PYTHONBUILDDIR)/*.so $(CELLENGINEDEST)
 
 # ----------------------------------------------------------------------
 # build/install micropolisEngine
@@ -123,6 +124,6 @@ MICROPOLISENGINEDEST = pyMicropolis/micropolisEngine
 build_micropolisEngine:
 	$(MAKE) -C MicropolisEngine build_python
 	cp MicropolisEngine/objs/micropolisengine.py $(MICROPOLISENGINEDEST)
-	cp MicropolisEngine/objs/$(PYTHONBUILDDIR)/_micropolisengine.so $(MICROPOLISENGINEDEST)
+	cp MicropolisEngine/objs/$(PYTHONBUILDDIR)/*.so $(MICROPOLISENGINEDEST)
 
 ########################################################################

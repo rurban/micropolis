@@ -65,9 +65,10 @@
 PYTHON = python
 SWIG = swig
 
-PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util ; \
-	print("lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
+PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util, sys; \
+	print("lib.%s-%s-%s" \
+		% (util.get_platform(), sys.implementation.name, \
+                   "".join(map(str, sys.version_info[:2]))))')
 
 SOURCES = \
 	src/cellengine.cpp \

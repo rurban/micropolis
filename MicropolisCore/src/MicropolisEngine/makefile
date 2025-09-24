@@ -65,9 +65,10 @@
 PYTHON = python
 SWIG = swig
 
-PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util ; \
-	print("lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
+PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util, sys; \
+	print("lib.%s-%s-%s" \
+		% (util.get_platform(), sys.implementation.name, \
+                   "".join(map(str, sys.version_info[:2]))))')
 
 SOURCES = \
 	src/allocate.cpp \
@@ -119,7 +120,7 @@ MICROPOLISENGINE: build_python
 build_python: objs/$(PYTHONBUILDDIR)/_micropolisengine.so
 
 objs/$(PYTHONBUILDDIR)/_micropolisengine.so: build_swig setup.py $(SOURCES) $(HEADERS)
-	mkdir -p "objs/$(PYTHONBUILDDIR)"
+	-mkdir -p "objs/$(PYTHONBUILDDIR)"
 	$(PYTHON) setup.py build --build-base=objs
 
 # ----------------------------------------------------------------------
@@ -133,6 +134,7 @@ objs/$(PYTHONBUILDDIR)/_micropolisengine.so: build_swig setup.py $(SOURCES) $(HE
 build_swig: objs/micropolisengine_wrap.cpp
 
 objs/micropolisengine_wrap.cpp: swig/micropolisengine.i swig/micropolisengine-swig-python.i $(HEADERS)
+	-mkdir -p objs
 	$(SWIG) -python -c++ -Isrc -Wall \
 	        -outdir objs \
 		-o objs/micropolisengine_wrap.cpp \
