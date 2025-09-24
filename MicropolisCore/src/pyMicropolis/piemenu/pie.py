@@ -90,7 +90,7 @@ FontCache = {}
 
 def GetFont(s):
 
-    if FontCache.has_key(s):
+    if s in FontCache:
         return FontCache[s]
 
     descr = pango.FontDescription(s)
@@ -108,7 +108,7 @@ ImageCache = {}
 
 def GetImage(s):
    
-    if ImageCache.has_key(s):
+    if s in ImageCache:
         return ImageCache[s]
    
     image = None
@@ -120,10 +120,10 @@ def GetImage(s):
     elif s[-4:].lower() == '.svg':
         try:
             # FIXME: read SVG into image
-            print "SVG images not supported yet:", s
+            print("SVG images not supported yet:", s)
         except: pass
     else:
-        print "Don't know how to load image file type:", s
+        print("Don't know how to load image file type:", s)
    
     if image:
         ImageCache[s] = image
@@ -352,7 +352,7 @@ class PieItem:
                     iconX = labelWidth + iconPadding
                     iconY = Floor(((height - iconHeight) / 2) + iconPadding)
                 else:
-                    print "Invalid iconSide: " + repr(iconSide)
+                    print("Invalid iconSide: " + repr(iconSide))
 
         self.width = width
         self.height = height
@@ -830,7 +830,7 @@ class PieMenu:
 
     def validate(self, context, pcontext, playout):
 
-        print "VALIDATE", self.valid
+        print("VALIDATE", self.valid)
 
         if self.valid:
             return
@@ -873,7 +873,7 @@ class PieMenu:
 
     def layout(self, context, pcontext, playout):
 
-        print "PieMenu layout", self, context, pcontext, playout
+        print("PieMenu layout", self, context, pcontext, playout)
 
         # Just the visible items.
         visibleItems = []
@@ -962,7 +962,7 @@ class PieMenu:
                   if ringIndex < len(maxPieItems):
                       maxRingItems = maxPieItems[ringIndex]
                   else:
-                      print "Layout error: too many pie items, maxPieItems array did not add up right."
+                      print("Layout error: too many pie items, maxPieItems array did not add up right.")
 
               # Append the pie item to the end of the pieItems array.
               pieItems.append(item)
@@ -1334,7 +1334,7 @@ class PieMenu:
         # Done laying out the pie menu. (Whew!)
 
         # FIXME: Just do this after popup?
-        print "AFTER LAYOUT", "WIDTH", self.width, "HEIGHT", self.height
+        print("AFTER LAYOUT", "WIDTH", self.width, "HEIGHT", self.height)
         self.setWindowShape()
 
 
@@ -1498,7 +1498,7 @@ class PieMenu:
 
     def changeSize(self, width, height):
 
-        print "CHANGESIZE", width, height
+        print("CHANGESIZE", width, height)
 
         width = int(width)
         height = int(height)
@@ -1535,7 +1535,7 @@ class PieMenu:
 
         #print "W", self.window
 
-        print "POINTER_GRAB"
+        print("POINTER_GRAB")
         gtk.gdk.pointer_grab(
             d.window,
             True,
@@ -1558,7 +1558,7 @@ class PieMenu:
 
         self.d.grab_remove()
 
-        print "POINTER_UNGRAB"
+        print("POINTER_UNGRAB")
         gtk.gdk.pointer_ungrab()
 
         self.hide()

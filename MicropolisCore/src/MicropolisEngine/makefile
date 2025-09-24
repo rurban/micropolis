@@ -66,8 +66,8 @@ PYTHON = python
 SWIG = swig
 
 PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util ; \
-	print "lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION"))')
+	print("lib.%s-%s" \
+		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
 
 SOURCES = \
 	src/allocate.cpp \
@@ -119,6 +119,7 @@ MICROPOLISENGINE: build_python
 build_python: objs/$(PYTHONBUILDDIR)/_micropolisengine.so
 
 objs/$(PYTHONBUILDDIR)/_micropolisengine.so: build_swig setup.py $(SOURCES) $(HEADERS)
+	mkdir -p "objs/$(PYTHONBUILDDIR)"
 	$(PYTHON) setup.py build --build-base=objs
 
 # ----------------------------------------------------------------------

@@ -77,7 +77,7 @@ import gobject
 import cairo
 import pango
 import math
-import thread
+import _thread
 import random
 import array
 
@@ -106,16 +106,16 @@ class MicropolisNotebook(gtk.Notebook):
             gtk.gdk.ACTION_MOVE)
 
         def on_dnd_drag_leave(sender, context, time):
-            print "on_dnd_drag_leave"
+            print("on_dnd_drag_leave")
             sender.modify_bg(gtk.STATE_NORMAL, None)
 
         def on_dnd_drag_motion(sender, context, x, y, time):
-            print "on_dnd_drag_motion"
+            print("on_dnd_drag_motion")
             color = gtk.gdk.Color(65535,0,0)
             sender.modify_bg(gtk.STATE_NORMAL, color)
 
         def on_dnd_drag_drop(sender, context, x, y, time):
-            print "on_dnd_drag_drop"
+            print("on_dnd_drag_drop")
 
         self.connect("drag-leave", on_dnd_drag_leave)
         self.connect("drag-motion", on_dnd_drag_motion)
@@ -142,7 +142,7 @@ class MicropolisNotebook(gtk.Notebook):
         self,
         notebook,
         offset):
-        print "CHANGECURRENTPAGE", self, notebook, offset
+        print("CHANGECURRENTPAGE", self, notebook, offset)
 
 
     def createWindow(
@@ -151,7 +151,7 @@ class MicropolisNotebook(gtk.Notebook):
         page,
         x,
         y):
-        print "==== CREATEWINDOW", self, notebook, page, x, y
+        print("==== CREATEWINDOW", self, notebook, page, x, y)
         return self.target.createWindowNotebook(self, notebook, page, x, y)
 
 
@@ -159,7 +159,7 @@ class MicropolisNotebook(gtk.Notebook):
         self,
         notebook,
         type):
-        print "FOCUSTAB", self, notebook, type
+        print("FOCUSTAB", self, notebook, type)
         return False
 
 
@@ -167,7 +167,7 @@ class MicropolisNotebook(gtk.Notebook):
         self,
         notebook,
         directionType):
-        print "MOVEFOCUSOUT", self, notebook, directionType
+        print("MOVEFOCUSOUT", self, notebook, directionType)
 
 
     def pageAdded(
@@ -175,7 +175,7 @@ class MicropolisNotebook(gtk.Notebook):
         notebook,
         child,
         pageNumber):
-        print "PAGEADDED", self, child, pageNumber
+        print("PAGEADDED", self, child, pageNumber)
 
 
     def pageRemoved(
@@ -183,7 +183,7 @@ class MicropolisNotebook(gtk.Notebook):
         notebook,
         child,
         pageNumber):
-        print "PAGEREMOVED", self, notebook, child, pageNumber
+        print("PAGEREMOVED", self, notebook, child, pageNumber)
 
 
     def pageReordered(
@@ -191,14 +191,14 @@ class MicropolisNotebook(gtk.Notebook):
         notebook,
         child,
         pageNumber):
-        print "PAGEREORDERED", self, notebook, child, pageNumber
+        print("PAGEREORDERED", self, notebook, child, pageNumber)
 
 
     def selectPage(
         self,
         notebook,
         moveFocus):
-        print "SELECTPAGE", self, notebook, moveFocus
+        print("SELECTPAGE", self, notebook, moveFocus)
         return False
 
 
@@ -211,7 +211,7 @@ class MicropolisNotebook(gtk.Notebook):
         # This gets called when the user switches to a page, and while
         # we're adding them.
 
-        print "SWITCHPAGE", self, notebook, page, pageNum
+        print("SWITCHPAGE", self, notebook, page, pageNum)
 
 
 ########################################################################

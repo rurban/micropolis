@@ -68,7 +68,7 @@
 import random
 
 
-def GetElementText(el, default=u''):
+def GetElementText(el, default=''):
     if not el:
         return default
     text = default
@@ -129,7 +129,7 @@ def GetSubElement(el, key):
     return None
 
 
-def GetSubElementText(el, key, default=u''):
+def GetSubElementText(el, key, default=''):
     return GetElementText(GetSubElement(el, key), default)
 
 

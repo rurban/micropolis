@@ -77,7 +77,7 @@ import gobject
 import cairo
 import pango
 import math
-import thread
+import _thread
 import random
 import array
 
@@ -87,9 +87,9 @@ import array
 
 
 import micropolisengine
-import micropolispiemenus
+from . import micropolispiemenus
 from pyMicropolis.tileEngine import tileengine, tiledrawingarea
-import micropolistool
+from . import micropolistool
 
 
 ########################################################################
@@ -158,7 +158,7 @@ for spriteData in Sprites:
 
 
 def PRINT(*args):
-    print args
+    print(args)
 
 
 ########################################################################
@@ -339,7 +339,7 @@ class MicropolisDrawingArea(tiledrawingarea.TileDrawingArea):
             if not sprite:
                 break
             self.drawSprite(ctx, sprite)
-            sprite = sprite.next
+            sprite = sprite.__next__
 
 
     def drawSprite(self, ctx, sprite):

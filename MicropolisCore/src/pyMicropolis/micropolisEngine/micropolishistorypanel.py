@@ -73,7 +73,7 @@ import gtk
 import cairo
 import pango
 import micropolisengine
-import micropolishistoryview
+from . import micropolishistoryview
 
 
 ########################################################################

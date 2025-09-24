@@ -103,7 +103,7 @@
 #include <map>
 
 #include <cairo.h>
-#include <pycairo.h>
+#include <py3cairo.h>
 
 
 ////////////////////////////////////////////////////////////////////////

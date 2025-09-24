@@ -76,14 +76,14 @@ import random
 import micropolisengine
 import gobject
 import cairo
-from xmlutilities import *
+from .xmlutilities import *
 from pyMicropolis.tileEngine import tileengine
 from micropolisengine import *
-import micropoliszone
+from . import micropoliszone
 import xml.dom.minidom
 from xml.dom.minidom import Node
 import pprint
-from cStringIO import StringIO
+from io import StringIO
 
 
 ########################################################################
@@ -197,7 +197,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
 
 
     def initGamePython(self):
-        print "MicropoligGenericEngine initGamePython: This should be called at the end of the concrete subclass's __init__ method."
+        print("MicropoligGenericEngine initGamePython: This should be called at the end of the concrete subclass's __init__ method.")
 
 
     def __del__(
@@ -253,14 +253,14 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
         views = self.views
         if view not in views:
             self.views.append(view)
-            print "ADDVIEW", view
+            print("ADDVIEW", view)
 
 
     def removeView(self, view):
         views = self.views
         if view in views:
             views.remove(view)
-            print "REMOVEVIEW", view
+            print("REMOVEVIEW", view)
 
 
     def getMapImage(
@@ -292,7 +292,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
             ((height % tileHeight) != 0) or
             # Size must be 1:1 aspect ratio.
             (tileWidth != tileHeight)):
-            print "MicropolisGenericEngine getMapImage invalid size", width, height
+            print("MicropolisGenericEngine getMapImage invalid size", width, height)
             return None
 
         tileSize = tileWidth
@@ -376,7 +376,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
         elif name == 'policecoverage':
             return self.getPoliceCoverageImageAlphaSize()
         else:
-            print "MicropolisGenericEngine: getImageAlphaSize: Invalid data image name:", name
+            print("MicropolisGenericEngine: getImageAlphaSize: Invalid data image name:", name)
             return None, 0.0, 0.0, 0.0
 
 
@@ -913,7 +913,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
 
         if name == 'paused':
             self.running = not self.simPaused
-            print "PAUSED", self.simPaused, "running", self.running
+            print("PAUSED", self.simPaused, "running", self.running)
             if self.running:
                 self.startTimer()
             else:
@@ -955,10 +955,10 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
             raise Exception("Expected top level 'metaCity' element in meta city file")
 
         saveFileDir, metaFileName = os.path.split(os.path.abspath(metaFilePath))
-        saveFileName = GetSubElementText(el, u'saveFileName', None)
-        title = GetSubElementText(el, u'title', '')
-        description = GetSubElementText(el, u'description', '')
-        readOnly = GetSubElementBool(el, u'readOnly', False)
+        saveFileName = GetSubElementText(el, 'saveFileName', None)
+        title = GetSubElementText(el, 'title', '')
+        description = GetSubElementText(el, 'description', '')
+        readOnly = GetSubElementBool(el, 'readOnly', False)
 
         self.saveFileDir = saveFileDir
         self.metaFileName = metaFileName
@@ -1019,19 +1019,19 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
         metaFilePath = os.path.join(saveFileDir, metaFileName)
 
         f = open(metaFilePath, 'wb')
-        print xmlText
+        print(xmlText)
         f.write(xmlText)
         f.close()
 
 
     def getMetaData(self):
         doc = xml.dom.minidom.Document()
-        el = doc.createElement(u'metaCity')
+        el = doc.createElement('metaCity')
         doc.appendChild(el)
 
-        SetSubElementText(el, u'title', self.title)
-        SetSubElementText(el, u'description', self.description)
-        SetSubElementBool(el, u'readOnly', self.readOnly)
+        SetSubElementText(el, 'title', self.title)
+        SetSubElementText(el, 'description', self.description)
+        SetSubElementBool(el, 'readOnly', self.readOnly)
 
         return doc.toxml()
 
@@ -1039,7 +1039,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
     def loadMetaScenario(self, id):
         if ((id <= micropolisengine.SC_NONE) or
             (id >= micropolisengine.SC_COUNT)):
-            print "loadMetaScenario: Invalid scenario id:", id
+            print("loadMetaScenario: Invalid scenario id:", id)
             return
 
         if False: # TODO
@@ -1069,9 +1069,9 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
 
     def dumpRobots(self):
         robots = self.robots
-        print "==== robots", len(robots)
+        print("==== robots", len(robots))
         for robot in robots:
-            print "robot", robot.x, robot.y, "zone", robot.zone.x, robot.zone.y, robot, robot.zone
+            print("robot", robot.x, robot.y, "zone", robot.zone.x, robot.zone.y, robot, robot.zone)
 
 
     def addRobot(self, robot):
@@ -1128,7 +1128,7 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
 
     def simZones(self):
 
-        for zone in self.zoneMap.values():
+        for zone in list(self.zoneMap.values()):
             zone.tick()
 
 
@@ -1183,43 +1183,43 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
             handler(*args)
             #print "Called handler."
         else:
-            print "No handler for", name
+            print("No handler for", name)
 
 
     def handle_autoGoto(self, x, y):
-        print "handle_autoGoto(self, x, y)", (self, x, y)
+        print("handle_autoGoto(self, x, y)", (self, x, y))
 
 
     def handle_didGenerateMap(self):
-        print "handle_didGenerateMap(self)", (self,)
+        print("handle_didGenerateMap(self)", (self,))
 
 
     def handle_didLoadCity(self):
-        print "handle_didLoadCity(self)", (self,)
+        print("handle_didLoadCity(self)", (self,))
 
 
     def handle_didLoadScenario(self):
-        print "handle_didLoadScenario(self)", (self,)
+        print("handle_didLoadScenario(self)", (self,))
 
 
     def handle_didSaveCity(self):
-        print "handle_didSaveCity(self)", (self,)
+        print("handle_didSaveCity(self)", (self,))
 
 
     def handle_didTool(self, name, x, y):
-        print "handle_didTool(self, name, x, y)", (self, name, x, y)
+        print("handle_didTool(self, name, x, y)", (self, name, x, y))
 
 
     def handle_didntLoadCity(self, msg):
-        print "handle_didntLoadCity(self, msg)", (self, msg)
+        print("handle_didntLoadCity(self, msg)", (self, msg))
 
 
     def handle_didntSaveCity(self, msg):
-        print "handle_didntSaveCity(self, msg)", (self, msg)
+        print("handle_didntSaveCity(self, msg)", (self, msg))
 
 
     def handle_playNewCity(self):
-        print "handle_playNewCity(self)", (self,)
+        print("handle_playNewCity(self)", (self,))
 
 
     def handle_makeSound(self, channel, sound, x, y):
@@ -1228,49 +1228,49 @@ class MicropolisGenericEngine(micropolisengine.Micropolis):
 
 
     def handle_newGame(self):
-        print "handle_newGame(self)", (self,)
+        print("handle_newGame(self)", (self,))
 
 
     def handle_loseGame(self):
-        print "handle_loseGame(self)", (self,)
+        print("handle_loseGame(self)", (self,))
 
 
     def handle_reallyStartGame(self):
-        print "handle_reallyStartGame(self)", (self,)
+        print("handle_reallyStartGame(self)", (self,))
 
 
     def handle_saveCityAs(self):
-        print "handle_saveCityAs(self)", (self,)
+        print("handle_saveCityAs(self)", (self,))
 
 
     def handle_showBudgetAndWait(self):
-        print "handle_showBudgetAndWait(self)", (self,)
+        print("handle_showBudgetAndWait(self)", (self,))
         # @todo Show budget window. Actually pause the engine here. Maybe start a timeout to un-pause it.
 
 
     def handle_showPicture(self, id):
         #print "handle_showPicture(self, id)", (self, id)
-        print "SHOWPICTURE", id
+        print("SHOWPICTURE", id)
 
 
     def handle_showZoneStatus(self, tileCategory, s0, s1, s2, s3, s4, x, y):
-        print "handle_showZoneStatus(self, tileCategory, s0, s1, s2, s3, s4, x, y)", (self, tileCategory, s0, s1, s2, s3, s4, x, y)
+        print("handle_showZoneStatus(self, tileCategory, s0, s1, s2, s3, s4, x, y)", (self, tileCategory, s0, s1, s2, s3, s4, x, y))
 
 
     def handle_startEarthquake(self, magnitude):
-        print "handle_startEarthquake(self, magnitude)", (self, magnitude,)
+        print("handle_startEarthquake(self, magnitude)", (self, magnitude,))
 
 
     def handle_startScenario(self, scenario):
-        print "handle_startScenario(self, scenario)", (self, scenario)
+        print("handle_startScenario(self, scenario)", (self, scenario))
 
 
     def handle_startLoad(self):
-        print "handle_startLoad(self)", (self,)
+        print("handle_startLoad(self)", (self,))
 
 
     def handle_winGame(self):
-        print "handle_winGame(self)", (self,)
+        print("handle_winGame(self)", (self,))
 
 
     def handle_update(self, name, *args):

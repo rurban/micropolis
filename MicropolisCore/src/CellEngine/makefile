@@ -66,8 +66,8 @@ PYTHON = python
 SWIG = swig
 
 PYTHONBUILDDIR = $(shell python -c 'from distutils import sysconfig, util ; \
-	print "lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION"))')
+	print("lib.%s-%s" \
+		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
 
 SOURCES = \
 	src/cellengine.cpp \
@@ -92,6 +92,7 @@ CELLENGINE: build_python
 build_python: objs/$(PYTHONBUILDDIR)/_cellengine.so
 
 objs/$(PYTHONBUILDDIR)/_cellengine.so: build_swig setup.py $(SOURCES) $(HEADERS)
+	mkdir -p "objs/$(PYTHONBUILDDIR)"
 	$(PYTHON) setup.py build --build-base=objs
 
 # ----------------------------------------------------------------------

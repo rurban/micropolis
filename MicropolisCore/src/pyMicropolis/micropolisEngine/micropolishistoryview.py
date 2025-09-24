@@ -73,7 +73,7 @@ import gtk
 import cairo
 import pango
 import micropolisengine
-import micropolisview
+from . import micropolisview
 
 
 ########################################################################
@@ -391,7 +391,7 @@ class MicropolisHistoryView(micropolisview.MicropolisView):
             rgb = (0.5, 0.5, 1)
             label = '120 Years'
         else:
-            print "Invalid historyScale:", historyScale
+            print("Invalid historyScale:", historyScale)
             rgb = (1, 0, 0)
             label = '???'
 
@@ -559,7 +559,7 @@ class MicropolisHistoryView(micropolisview.MicropolisView):
         if historyScale == micropolisengine.HISTORY_SCALE_SHORT:
 
             dur = 120
-            r = range(dur - cityMonth, -1, -dur / 10)
+            r = list(range(dur - cityMonth, -1, -dur / 10))
 
         elif historyScale == micropolisengine.HISTORY_SCALE_LONG:
 
@@ -567,11 +567,11 @@ class MicropolisHistoryView(micropolisview.MicropolisView):
             past = 10 * (year % 10)
             year = int(year / 10) * 10
             dur = 1200
-            r = range(dur - past, -1, -dur / 10)
+            r = list(range(dur - past, -1, -dur / 10))
 
         else:
 
-            print "Invalid historyScale:", historyScale
+            print("Invalid historyScale:", historyScale)
             dur = 120
             r = ()
 
@@ -656,7 +656,7 @@ class MicropolisHistoryView(micropolisview.MicropolisView):
                 elif self.historyScale == micropolisengine.HISTORY_SCALE_LONG:
                     self.historyScale = micropolisengine.HISTORY_SCALE_SHORT
                 else:
-                    print "Invalid history scale", self.historyScale
+                    print("Invalid history scale", self.historyScale)
 
             elif targetType == 'legend':
 

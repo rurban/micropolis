@@ -73,7 +73,7 @@ import gtk
 import cairo
 import pango
 import micropolisengine
-import micropolisdrawingarea
+from . import micropolisdrawingarea
 
 
 ########################################################################
@@ -247,7 +247,7 @@ class MicropolisStartPanel(gtk.Frame):
 
 
     def startScenario(self, scenarioID):
-        print "STARTSCENARIO", scenarioID
+        print("STARTSCENARIO", scenarioID)
 
         self.target.startScenario(scenarioID)
 

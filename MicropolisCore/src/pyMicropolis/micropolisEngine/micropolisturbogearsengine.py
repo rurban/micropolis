@@ -69,8 +69,8 @@
 # Import stuff
 
 
-import micropolisgenericengine
-import micropolisrobot
+from . import micropolisgenericengine
+from . import micropolisrobot
 import os
 import sys
 import random
@@ -84,16 +84,16 @@ from datetime import datetime
 import traceback
 import re
 import cairo
-from cStringIO import StringIO
+from io import StringIO
 from pyMicropolis.tileEngine import tileengine
 import micropolisengine
 import turbogears
 from turbogears import identity
 import turbogears.database
 import cherrypy
-import eliza
+from . import eliza
 from micropolis.model import *
-import micropoliszone
+from . import micropoliszone
 
 
 ########################################################################
@@ -297,7 +297,7 @@ for tileIndex in range(0, micropolisengine.TILE_COUNT):
 
 
 AniTileGroups = []
-for group in AniTileGroupMap.values():
+for group in list(AniTileGroupMap.values()):
     if group not in AniTileGroups:
         AniTileGroups.append(group)
 
@@ -325,7 +325,7 @@ for group in AniTileGroups:
 
 
 def PRINT(*args):
-    print args
+    print(args)
 
 
 def Now():
@@ -461,21 +461,21 @@ class Session(object):
         self.messagesSeen = {}
 
         if False and messages:
-            print "=" * 72
+            print("=" * 72)
             for message in messages:
-                print message['message'], message.get('variable', ''), message
+                print(message['message'], message.get('variable', ''), message)
         
         if False:
-            print [
+            print([
                 (message['message'], message.get('variable', None))
                 for message in messages
-            ]
+            ])
 
         return messages
 
 
     def setEngine(self, engine):
-        print "setEngine", self, "to", engine, "was", self.engine
+        print("setEngine", self, "to", engine, "was", self.engine)
         if self.engine:
             self.engine.removeSession(self)
         self.engine = engine
@@ -484,7 +484,7 @@ class Session(object):
 
 
     def createEngine(self):
-        print "==== Session createEngine engine", self.engine
+        print("==== Session createEngine engine", self.engine)
 
         if self.engine:
             return
@@ -493,29 +493,29 @@ class Session(object):
             controller=self.controller)
         self.setEngine(engine)
 
-        print "Session createEngine created engine", engine
+        print("Session createEngine created engine", engine)
 
         user = GetCurrentUser()
 
-        print "Session createEngine got user", user
+        print("Session createEngine got user", user)
         
         if user:
 
             # FIXME: Look this up manually for now since something's weird about telling SQLAlchemy it's a foreign key.
-            print "USER CURRENT CITY ID", user.current_city_id
+            print("USER CURRENT CITY ID", user.current_city_id)
 
             if user.current_city_id:
-                print "Session createEngine user.current_city_id defined"
+                print("Session createEngine user.current_city_id defined")
                 city = City.query.filter_by(city_id=user.current_city_id).first()
-                print "Session createEngine user existing city", city
+                print("Session createEngine user existing city", city)
                 if city:
                     engine.loadCityFromDatabase(city)
                 else:
-                    print "Session createEngine user.current_city_id not found!", user.current_city_id
+                    print("Session createEngine user.current_city_id not found!", user.current_city_id)
                     user.current_city_id = None
 
             if not user.current_city_id:
-                print "Session createEngine user.current_city_id not defined, so saving new city to database"
+                print("Session createEngine user.current_city_id not defined, so saving new city to database")
                 #engine.generateNewMetaCity()
                 self.citySource = 'generated'
                 city = engine.saveCityToDatabase(
@@ -524,11 +524,11 @@ class Session(object):
                     engine.title,
                     engine.description)
                 city.mutable = True
-                print "Session createEngine user new mutable city", city
+                print("Session createEngine user new mutable city", city)
 
                 user.current_city_id = city.city_id
-                print "Session createEngine SET USER CURRENT CITY ID", city.city_id
-                print "Session createEngine made a new city for a new user.", city, user
+                print("Session createEngine SET USER CURRENT CITY ID", city.city_id)
+                print("Session createEngine made a new city for a new user.", city, user)
 
                 # Tell front end to generate a new city, so it knows what's up.
                 self.sendMessage({
@@ -551,7 +551,7 @@ class Session(object):
         if id not in self.screenCaptures:
 
             if row != 0:
-                print "Session screenCapture ERROR: unexpected row not zero", row, "id", id
+                print("Session screenCapture ERROR: unexpected row not zero", row, "id", id)
                 self.sendMessage({
                     'message': 'cancelScreenCapture',
                     'id': id,
@@ -573,7 +573,7 @@ class Session(object):
 
             if ((width != capture['width']) or
                 (height != capture['height'])):
-                print "Session screenCapture ERROR: unexpected width, height", width, height, "should be", self.screenCaptureWidth, self.screenCaptureHeight
+                print("Session screenCapture ERROR: unexpected width, height", width, height, "should be", self.screenCaptureWidth, self.screenCaptureHeight)
                 del self.screenCaptures[id]
                 return
 
@@ -587,15 +587,15 @@ class Session(object):
             gotSize += len(c)
 
         elapsed = time.time() - capture['startTime']
-        print "Session screenCapture id", id, "chunk", len(chunk), "got", gotSize, "expected", expectedSize, "progress", round((float(gotSize) / float(expectedSize)) if expectedSize else 0, 2), "elapsed", round(elapsed, 2), "rate", round((float(expectedSize) / float(elapsed)) if elapsed else 0, 2), "bytes per second"
+        print("Session screenCapture id", id, "chunk", len(chunk), "got", gotSize, "expected", expectedSize, "progress", round((float(gotSize) / float(expectedSize)) if expectedSize else 0, 2), "elapsed", round(elapsed, 2), "rate", round((float(expectedSize) / float(elapsed)) if elapsed else 0, 2), "bytes per second")
 
         if gotSize > expectedSize:
-            print "Session screenCapture ERROR: got too much data. gotSize", gotSize, "expectedSize", expectedSize
+            print("Session screenCapture ERROR: got too much data. gotSize", gotSize, "expectedSize", expectedSize)
             del self.screenCaptures[id]
             return
 
         if gotSize == expectedSize:
-            print "Session screenCapture FINISHED", id
+            print("Session screenCapture FINISHED", id)
 
             del self.screenCaptures[id]
 
@@ -620,12 +620,12 @@ class Session(object):
 
             surface.write_to_png(f)
             f.close()
-            print 'http://www.MicropolisOnline.com/static/temp/' + fileName
+            print('http://www.MicropolisOnline.com/static/temp/' + fileName)
 
             user = GetCurrentUser()
             fileData = open(filePath, 'rb').read()
 
-            url = u'/me/photos'
+            url = '/me/photos'
             params = {
                 'access_token': access_token,
                 'source': fileData,
@@ -638,7 +638,7 @@ class Session(object):
                 fileNames={
                     'source': 'MicropolisScreenCapture.png',
                 });
-            print "RESULT", result
+            print("RESULT", result)
 
 
     def cancelScreenCapture(self, messageDict, user):
@@ -771,8 +771,8 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             if session != exceptSession:
                 try:
                     session.sendMessage(message)
-                except Exception, e:
-                    print "======== XXX sendSessions exception:", e
+                except Exception as e:
+                    print("======== XXX sendSessions exception:", e)
                     traceback.print_exc(10)
 
         # Clean up the collapse flag so none of the sessions send it
@@ -785,8 +785,8 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
         try:
             for session in self.sessions:
                 session.sendMessage(message)
-        except Exception, e:
-            print "======== XXX sendSessions exception:", e
+        except Exception as e:
+            print("======== XXX sendSessions exception:", e)
             traceback.print_exc(100)
 
         # Clean up the collapse flag so none of the sessions send it
@@ -833,7 +833,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
         methodName = 'handleMessage_' + message
         method = getattr(self, methodName, None)
         if not method:
-            print "handleMessage: UNKNOWN MESSAGE", message
+            print("handleMessage: UNKNOWN MESSAGE", message)
         else:
             method(session, messageDict, user)
 
@@ -861,7 +861,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             self.heatSteps = 1
             self.heatRule = 0
         else:
-            print "Invalid disaster name:", disaster
+            print("Invalid disaster name:", disaster)
 
 
     def handleMessage_setTaxRate(self, session, messageDict, user):
@@ -940,24 +940,24 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def handleMessage_generateCity(self, session, messageDict, user):
-        print "MicropolisTurboGearsEngine handleMessage_generateCity", messageDict, user
+        print("MicropolisTurboGearsEngine handleMessage_generateCity", messageDict, user)
         self.generateNewMetaCity(messageDict.get('seed', 0))
         self.saveUserCity()
         self.pause()
 
 
     def handleMessage_loadMyCity(self, session, messageDict, user):
-        print "MicropolisTurboGearsEngine handleMessage_generateCity", messageDict, user
+        print("MicropolisTurboGearsEngine handleMessage_generateCity", messageDict, user)
         if user:
             city = None
             try:
                 cookie = messageDict['cookie']
                 city = City.query.filter_by(cookie=cookie).first()
-            except Exception, e:
-                print "City query error 5", e
+            except Exception as e:
+                print("City query error 5", e)
             if city:
                 if city.user_id != user.user_id:
-                    print "User tried to load their own city they do not own", user, user.user_id, city, city.user_id
+                    print("User tried to load their own city they do not own", user, user.user_id, city, city.user_id)
                 else:
                     # FIXME: this does not work right yet. need to load save files into sandbox city,
                     # not switch to changing save files.
@@ -968,12 +968,12 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def handleMessage_startGame(self, session, messageDict, user):
-        print "handleMessage_startGame", messageDict
+        print("handleMessage_startGame", messageDict)
         citySource = messageDict['citySource']
         cityID = messageDict['cityID']
         title = messageDict['title']
         description = messageDict['description']
-        print "STARTGAME", citySource, cityID, title, description, user
+        print("STARTGAME", citySource, cityID, title, description, user)
         self.citySource = citySource
         self.cityID = cityID
         self.title = title
@@ -983,7 +983,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
         self.resume()
 
         if user:
-            print "MicropolisTurboGearsEngine handleMessage_startGame user", user
+            print("MicropolisTurboGearsEngine handleMessage_startGame user", user)
             self.updateSavedCities(session, user)
 
 
@@ -996,13 +996,13 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
     def handleMessage_setPaused(self, session, messageDict, user):
         paused = messageDict.get('paused')
 
-        print "setPaused", paused
+        print("setPaused", paused)
         if paused == True:
             self.pause()
         elif paused == False:
             self.resume()
         else:
-            print "Bad paused value, should be true or false, not", paused
+            print("Bad paused value, should be true or false, not", paused)
 
 
     def handleMessage_setVirtualSpeed(self, session, messageDict, user):
@@ -1018,7 +1018,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def handleMessage_saveCity(self, session, messageDict, user):
-        print "saveCity", session, messageDict, user
+        print("saveCity", session, messageDict, user)
         if user:
             cookie = messageDict['cookie']
             title = messageDict['title'].decode('utf8')
@@ -1030,77 +1030,77 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def handleMessage_setMyCityTitle(self, session, messageDict, user):
-        print "SETMYCITYTITLE", messageDict, user
+        print("SETMYCITYTITLE", messageDict, user)
         if user:
             city = None
             try:
                 cookie = messageDict['cookie']
                 city = City.query.filter_by(cookie=cookie).first()
-            except Exception, e:
-                print "City query error 1", e
+            except Exception as e:
+                print("City query error 1", e)
             if city:
                 if city.user_id != user.user_id:
-                    print "User tried to set title of city they do not own", user, city
+                    print("User tried to set title of city they do not own", user, city)
                 else:
                     title = messageDict['title']
-                    city.title = unicode(title)
+                    city.title = str(title)
 
 
     def handleMessage_setMyCityDescription(self, session, messageDict, user):
-        print "SETMYCITYDESCRIPTION", messageDict, user
+        print("SETMYCITYDESCRIPTION", messageDict, user)
         if user:
             city = None
             try:
                 cookie = messageDict['cookie']
                 city = City.query.filter_by(cookie=cookie).first()
-            except Exception, e:
-                print "City query error 2", e
+            except Exception as e:
+                print("City query error 2", e)
             if city:
                 if city.user_id != user.user_id:
-                    print "User tried to set description of city they do not own", user, city
+                    print("User tried to set description of city they do not own", user, city)
                 else:
                     description = messageDict['description']
-                    city.description = unicode(description)
+                    city.description = str(description)
 
 
     def handleMessage_setMyCityShared(self, session, messageDict, user):
-        print "SETMYCITYSHARED", messageDict, user
+        print("SETMYCITYSHARED", messageDict, user)
         if user:
             city = None
             try:
                 cookie = messageDict['cookie']
                 city = City.query.filter_by(cookie=cookie).first()
-            except Exception, e:
-                print "City query error 3", e
-            print "CITY", city
+            except Exception as e:
+                print("City query error 3", e)
+            print("CITY", city)
             if city:
                 if city.user_id != user.user_id:
-                    print "User tried to set shared flag of city they do not own", user, city
+                    print("User tried to set shared flag of city they do not own", user, city)
                 else:
                     shared = messageDict['shared']
-                    print "before shared", city.shared
+                    print("before shared", city.shared)
                     city.shared = shared
-                    print "Setting shared", city.shared, type(city.shared)
+                    print("Setting shared", city.shared, type(city.shared))
 
 
     def handleMessage_deleteMyCity(self, session, messageDict, user):
-        print "DELETEMYCITY", messageDict, user
+        print("DELETEMYCITY", messageDict, user)
         if user:
             city = None
             try:
                 cookie = messageDict['cookie']
                 city = City.query.filter_by(cookie=cookie).first()
-            except Exception, e:
-                print "City query error 4", e
+            except Exception as e:
+                print("City query error 4", e)
             if city:
                 if city.user_id != user.user_id:
-                    print "User tried to delete city they do not own", user, user.user_id, city, city.user_id
+                    print("User tried to delete city they do not own", user, user.user_id, city, city.user_id)
                 else:
-                    print "DELETE CITY", city
+                    print("DELETE CITY", city)
                     savedCities = user.getSavedCities(session)
-                    print "DESTROY", city
+                    print("DESTROY", city)
                     for cityData in savedCities:
-                        print cityData['cookie'], cityData['title'], cityData
+                        print(cityData['cookie'], cityData['title'], cityData)
                     city.destroy()
 
 
@@ -1113,7 +1113,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
         if ((tool not in ToolNameToIndex) or
             (not self.testBounds(x, y))):
 
-            print "INVALID ARGUMENT TO DRAWTOOLSTART", tool, x, y
+            print("INVALID ARGUMENT TO DRAWTOOLSTART", tool, x, y)
 
         else:
 
@@ -1137,7 +1137,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             (not self.testBounds(x0, y0)) or
             (not self.testBounds(x1, y1))):
 
-            print "INVALID ARGUMENT TO DRAWTOOLMOVE", tool, x0, y0, x1, y1
+            print("INVALID ARGUMENT TO DRAWTOOLMOVE", tool, x0, y0, x1, y1)
 
         else:
 
@@ -1158,7 +1158,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
         if ((tool not in ToolNameToIndex) or
             (not self.testBounds(x, y))):
 
-            print "INVALID ARGUMENT TO DRAWTOOLSTOP", tool, x, y
+            print("INVALID ARGUMENT TO DRAWTOOLSTOP", tool, x, y)
 
         else:
 
@@ -1256,7 +1256,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
         else:
 
-            print "Unknown chat channel:", channel
+            print("Unknown chat channel:", channel)
 
 
     def handleMessage_tiles(self, session, messageDict, user):
@@ -1272,7 +1272,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             viewWidth = messageDict['viewWidth']
             viewHeight = messageDict['viewHeight']
             code = messageDict['code']
-        except Exception, e:
+        except Exception as e:
             #print "OWCH", e
             self.expectationFailed("Invalid parameters: " + str(e))
 
@@ -1349,7 +1349,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
                     'xHot': sprite.xHot,
                     'yHot': sprite.yHot,
                 })
-                sprite = sprite.next
+                sprite = sprite.__next__
 
             #print "MESSAGE SPRITES", sprites
             session.sendMessage({
@@ -1386,7 +1386,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             historyTypes = messageDict['types']
             historyWidth = messageDict['width']
             historyHeight = messageDict['height']
-        except Exception, e:
+        except Exception as e:
             self.expectationFailed("Invalid parameters: " + str(e))
 
         if not session.isMessageQueued('update', 'historyview', id):
@@ -1582,7 +1582,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def loadCityFromDatabase(self, city):
-        print "MicropolisTurboGearsEngine loadCityFromDatabase", city
+        print("MicropolisTurboGearsEngine loadCityFromDatabase", city)
         saveFile = city.save_file
         tempFileName = tempfile.mktemp()
         f = open(tempFileName, 'wb')
@@ -1593,17 +1593,17 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def saveCityToDatabase(self, user, city, title=None, description=None):
-        print "MicropolisTurboGearsEngine saveCityToDatabase", user, city, title, description
+        print("MicropolisTurboGearsEngine saveCityToDatabase", user, city, title, description)
 
         now = datetime.now()
 
         if (city and
             (city.user_id != user.user_id)):
-            print "A user tried to save somebody else's city!", "user", user, "city", city, "city.user_id", city.user_id
+            print("A user tried to save somebody else's city!", "user", user, "city", city, "city.user_id", city.user_id)
             city = None
 
         if not city:
-            print "MicropolisTurboGearsEngine saveCityToDatabase creating city."
+            print("MicropolisTurboGearsEngine saveCityToDatabase creating city.")
             city = City(
                 user_id=user.user_id,
                 created=now,
@@ -1612,17 +1612,17 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
             # It might be a good idea to flush the city to the
             # database so it gets an id, now.
-            print "MicropolisTurboGearsEngine saveCityToDatabase Flushing database to create city."
+            print("MicropolisTurboGearsEngine saveCityToDatabase Flushing database to create city.")
             turbogears.database.session.flush()
 
-            print "MicropolisTurboGearsEngine saveCityToDatabase created new city", city.city_id, city
+            print("MicropolisTurboGearsEngine saveCityToDatabase created new city", city.city_id, city)
 
         saveFile = self.getSaveFileData()
         metadata = self.getMetaData()
         iconData = self.getMapImageData(1)
         thumbnailData = self.getMapImageData(3)
 
-        print "TITLE", type(title), title, "DESCRIPTION", type(description), description
+        print("TITLE", type(title), title, "DESCRIPTION", type(description), description)
         if title:
             city.title = title
         if description:
@@ -1630,7 +1630,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
         city.updated = now
         city.save_file = saveFile
-        print "METADATA", type(metadata), metadata
+        print("METADATA", type(metadata), metadata)
         city.metadata = metadata
         city.icon = iconData
         city.thumbnail = thumbnailData
@@ -1678,7 +1678,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def setGameMode(self, gameMode, user):
-        print "setGameMode", gameMode, self.startVirtualSpeed
+        print("setGameMode", gameMode, self.startVirtualSpeed)
         if gameMode == "start":
             self.setVirtualSpeed(0)
             self.pause()
@@ -1727,7 +1727,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             ticks = min(ticks, self.maxLoopsPerPoll)
 
             #print "********", "TICKS", ticks, "ELAPSED", elapsed, "LPS", self.loopsPerSecond
-            print ticks,
+            print(ticks, end=' ')
             sys.stdout.flush()
 
             if self.simPasses != ticks:
@@ -1739,8 +1739,8 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
             try:
                 self.simTick()
-            except Exception, e:
-                print "SIMTICK EXCEPTION:", e
+            except Exception as e:
+                print("SIMTICK EXCEPTION:", e)
 
             self.animateTiles()
 
@@ -1983,8 +1983,8 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
             #print "GENERATETILE", tile, "RESULT", result
             return result
 
-        except Exception, e:
-            print "GENERATE TILE ERROR", e
+        except Exception as e:
+            print("GENERATE TILE ERROR", e)
 
 
     def getTileData(
@@ -2035,7 +2035,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
     
 
     def handle_didGenerateMap(self):
-        print "MicropolisTurboGearsEngine handle_didGenerateMap(self)", (self,), self.generatedCitySeed
+        print("MicropolisTurboGearsEngine handle_didGenerateMap(self)", (self,), self.generatedCitySeed)
 
         #user = GetCurrentUser()
         #if user:
@@ -2054,7 +2054,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
     
     def handle_didLoadCity(self):
-        print "handle_didLoadCity(self)", (self,)
+        print("handle_didLoadCity(self)", (self,))
         #self.sendSessions({
         #    'message': 'didLoadCity',
         #    'cityID': self.cityID,
@@ -2074,7 +2074,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
 
     def handle_didSaveCity(self):
-        print "handle_didSaveCity(self)", (self,)
+        print("handle_didSaveCity(self)", (self,))
         self.sendSessions({
             'message': 'didSaveCity',
         })
@@ -2099,7 +2099,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
     
     def handle_didntSaveCity(self, msg):
-        print "handle_didntSaveCity(self, msg)", (self, msg)
+        print("handle_didntSaveCity(self, msg)", (self, msg))
         self.sendSessions({
             'message': 'didntSaveCity',
             'msg': msg,
@@ -2147,7 +2147,7 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
     
     def handle_saveCityAs(self):
-        print "handle_saveCityAs(self)", (self,)
+        print("handle_saveCityAs(self)", (self,))
         self.sendSessions({
             'message': 'saveCityAs',
         })
@@ -2407,8 +2407,8 @@ class MicropolisTurboGearsEngine(micropolisgenericengine.MicropolisGenericEngine
 
             self.sendSessions(message)
 
-        except Exception, e:
-            print '======== XXX handle_update ERROR:', e
+        except Exception as e:
+            print('======== XXX handle_update ERROR:', e)
             traceback.print_exc(10)
 
 

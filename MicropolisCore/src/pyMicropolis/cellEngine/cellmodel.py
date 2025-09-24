@@ -73,14 +73,14 @@ import sys
 import os
 import time
 import random
-import cellengine
+from . import cellengine
 import gobject
 import cairo
 from pyMicropolis.cellEngine import cellengine
 import xml.dom.minidom
 from xml.dom.minidom import Node
 import pprint
-from StringIO import StringIO
+from io import StringIO
 
 
 ########################################################################
@@ -94,7 +94,7 @@ __version__ = "0.9"
 # Utilities
 
 
-def GetElementText(el, default=u''):
+def GetElementText(el, default=''):
     if not el:
         return default
     text = default
@@ -155,7 +155,7 @@ def GetSubElement(el, key):
     return None
 
 
-def GetSubElementText(el, key, default=u''):
+def GetSubElementText(el, key, default=''):
     return GetElementText(GetSubElement(el, key), default)
 
 
@@ -235,14 +235,14 @@ class CellModel(cellengine.CellEngine):
         views = self.views
         if view not in views:
             self.views.append(view)
-            print "ADDVIEW", view
+            print("ADDVIEW", view)
 
 
     def removeView(self, view):
         views = self.views
         if view in views:
             views.remove(view)
-            print "REMOVEVIEW", view
+            print("REMOVEVIEW", view)
 
 
     def startTimer(

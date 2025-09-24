@@ -73,9 +73,9 @@ import gtk
 import cairo
 import pango
 import micropolisengine
-import micropolisview
-import micropolisnoticeview
-import micropolisdrawingarea
+from . import micropolisview
+from . import micropolisnoticeview
+from . import micropolisdrawingarea
 
 ########################################################################
 # MicropolisNoticePanel

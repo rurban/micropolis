@@ -74,13 +74,13 @@ import os
 import time
 import math
 import posixpath
-import BaseHTTPServer
-import urllib
-import urlparse
+import http.server
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import cgi
 import shutil
 import mimetypes
-from cStringIO import StringIO
+from io import StringIO
 
 
 ########################################################################
@@ -244,7 +244,7 @@ class MicropolisView:
 # MicropolisWebServer class
 
 
-class MicropolisHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class MicropolisHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
     server_version = "MicropolisHTTP/" + __version__
 
@@ -253,9 +253,9 @@ class MicropolisHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             *args,
             **params):
 
-        print "__INIT__ MicropolisHTTPRequestHandler", "SELF", self, "ARGS", args, "PARAMS", params
+        print("__INIT__ MicropolisHTTPRequestHandler", "SELF", self, "ARGS", args, "PARAMS", params)
 
-        BaseHTTPServer.BaseHTTPRequestHandler.__init__(
+        http.server.BaseHTTPRequestHandler.__init__(
             self,
             *args,
             **params)
@@ -264,7 +264,7 @@ class MicropolisHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Serve a GET request."""
         path = self.path
-        print "do_GET", self, "path", path
+        print("do_GET", self, "path", path)
 
         server = self.server
         m = server.m
@@ -303,7 +303,7 @@ class MicropolisHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 # MicropolisWebServer class
 
 
-class MicropolisHTTPServer(BaseHTTPServer.HTTPServer):
+class MicropolisHTTPServer(http.server.HTTPServer):
 
 
     def __init__(
@@ -311,16 +311,16 @@ class MicropolisHTTPServer(BaseHTTPServer.HTTPServer):
             *args,
             **params):
 
-        print "__INIT__ MicropolisHTTPServer", "SELF", self, "ARGS", args, "PARAMS", params
+        print("__INIT__ MicropolisHTTPServer", "SELF", self, "ARGS", args, "PARAMS", params)
 
-        BaseHTTPServer.HTTPServer.__init__(
+        http.server.HTTPServer.__init__(
             self,
             *args,
             **params)
 
         m = micropolisengine.Micropolis()
         self.m = m
-        print "Created Micropolis simulator engine:", m
+        print("Created Micropolis simulator engine:", m)
 
         m.resourceDir = 'res'
         m.initGame()
@@ -330,7 +330,7 @@ class MicropolisHTTPServer(BaseHTTPServer.HTTPServer):
             path = os.path.basename(__file__)
             path = os.path.abspath(os.path.join(path, "../cities"))
             cityFileName = path + os.sep + 'haight.cty'
-            print "Loading city file:", cityFileName
+            print("Loading city file:", cityFileName)
             m.loadFile(cityFileName)
 
             # Initialize the simulator engine.
@@ -350,8 +350,8 @@ class MicropolisHTTPServer(BaseHTTPServer.HTTPServer):
 
 def test(HandlerClass = MicropolisHTTPRequestHandler,
          ServerClass = MicropolisHTTPServer):
-    print "Starting web server:", HandlerClass, ServerClass
-    BaseHTTPServer.test(HandlerClass, ServerClass)
+    print("Starting web server:", HandlerClass, ServerClass)
+    http.server.test(HandlerClass, ServerClass)
 
 
 if __name__ == '__main__':

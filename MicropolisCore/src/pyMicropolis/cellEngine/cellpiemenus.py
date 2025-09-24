@@ -115,10 +115,7 @@ def MakePie(setToolAction):
 
     ):
 
-        apply(
-            piemenu.PieItem,
-            (),
-            params)
+        piemenu.PieItem(*(), **params)
 
 
     return pie

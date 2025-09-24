@@ -121,7 +121,7 @@ class TileWindow(gtk.Window):
 if __name__ == '__main__':
 
     win = TileWindow()
-    print "WIN", win
+    print("WIN", win)
     win.show_all()
 
     gtk.main()

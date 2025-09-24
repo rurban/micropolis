@@ -62,8 +62,8 @@
 ########################################################################
 
 PYTHONBUILDDIR=$(shell python -c 'from distutils import sysconfig, util ; \
-	print "lib.%s-%s" \
-		% (util.get_platform(), sysconfig.get_config_var("VERSION"))')
+	print("lib.%s-%s" \
+		% (util.get_platform(), sysconfig.get_config_var("VERSION")))')
 
 .PHONY: all build_tileEngine build_cellEngine doxygen
 

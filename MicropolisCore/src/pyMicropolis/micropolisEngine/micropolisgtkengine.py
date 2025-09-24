@@ -69,7 +69,7 @@
 # Import stuff
 
 
-import micropolisgenericengine
+from . import micropolisgenericengine
 import micropolisengine
 import gobject
 
@@ -551,21 +551,21 @@ You have 10 years to turn this swamp back into a city again.""",
 
 
     def handle_didGenerateMap(self):
-        print "handle_didGenerateMap(self)", (self,)
+        print("handle_didGenerateMap(self)", (self,))
         self.sendUpdate('tick')
         self.sendUpdate('editor')
         self.sendUpdate('map')
 
 
     def handle_didLoadCity(self):
-        print "handle_didLoadCity(self)", (self,)
+        print("handle_didLoadCity(self)", (self,))
         self.sendUpdate('tick')
         self.sendUpdate('editor')
         self.sendUpdate('map')
 
 
     def handle_didLoadScenario(self):
-        print "handle_didLoadScenario(self)", (self,)
+        print("handle_didLoadScenario(self)", (self,))
         self.sendUpdate('tick')
         self.sendUpdate('editor')
         self.sendUpdate('map')

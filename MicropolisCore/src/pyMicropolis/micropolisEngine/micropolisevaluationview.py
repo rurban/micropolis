@@ -92,7 +92,7 @@ import gtk
 import cairo
 import pango
 import micropolisengine
-import micropolisview
+from . import micropolisview
 
 
 ########################################################################

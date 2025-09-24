@@ -362,10 +362,7 @@ def MakePie(setToolAction):
 
     ):
 
-        apply(
-            piemenu.PieItem,
-            (),
-            params)
+        piemenu.PieItem(*(), **params)
 
 
     #return topPie
@@ -561,10 +558,7 @@ def NewMakePie(setToolAction):
 
     ):
 
-        apply(
-            piemenu.PieItem,
-            (),
-            params)
+        piemenu.PieItem(*(), **params)
 
 
     return toolPie
@@ -587,7 +581,7 @@ def main():
     win.add(target)
 
     def setToolAction(toolName):
-        print "setToolAction", toolName
+        print("setToolAction", toolName)
 
     pie = MakePie(setToolAction)
     target.setPie(pie)

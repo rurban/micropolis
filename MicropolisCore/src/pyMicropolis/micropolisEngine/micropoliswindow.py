@@ -77,7 +77,7 @@ import gobject
 import cairo
 import pango
 import math
-import thread
+import _thread
 import random
 import array
 
@@ -87,18 +87,18 @@ import array
 
 
 import micropolisengine
-import micropolisnotebook
-import micropolisstartpanel
-import micropolisgaugeview
-import micropolisnoticepanel
-import micropolismessagespanel
-import micropolisdrawingarea
-import micropolisevaluationpanel
-import micropolishistorypanel
-import micropolisbudgetpanel
-import micropolismappanel
-import micropolisdisasterspanel
-import micropoliscontrolpanel
+from . import micropolisnotebook
+from . import micropolisstartpanel
+from . import micropolisgaugeview
+from . import micropolisnoticepanel
+from . import micropolismessagespanel
+from . import micropolisdrawingarea
+from . import micropolisevaluationpanel
+from . import micropolishistorypanel
+from . import micropolisbudgetpanel
+from . import micropolismappanel
+from . import micropolisdisasterspanel
+from . import micropoliscontrolpanel
 
 
 ########################################################################
@@ -296,14 +296,14 @@ class MicropolisPanedWindow(gtk.Window):
 
     def startGame(self):
 
-        print "==== STARTGAME"
+        print("==== STARTGAME")
 
         engine = self.engine
 
         if False:
             cityFileName = 'cities/haight.cty'
             #cityFileName = 'cities/yokohama.cty'
-            print "Loading city file:", cityFileName
+            print("Loading city file:", cityFileName)
             engine.loadFile(cityFileName)
         else:
             self.generateCity()
@@ -318,13 +318,13 @@ class MicropolisPanedWindow(gtk.Window):
 
 
     def startScenario(self, id):
-        print "STARTSCENARIO", id
+        print("STARTSCENARIO", id)
         engine = self.engine
         engine.loadMetaScenario(id)
 
 
     def loadCityDialog(self):
-        print "LOAD CITY DIALOG"
+        print("LOAD CITY DIALOG")
 
         dialog = gtk.FileChooserDialog(
             title='Select a city to load.',
@@ -347,28 +347,28 @@ class MicropolisPanedWindow(gtk.Window):
         response = dialog.run()
         if response == gtk.RESPONSE_OK:
             fileName = dialog.get_filename()
-            print "FILENAME", fileName
+            print("FILENAME", fileName)
             result = False
             try:
                 self.engine.loadMetaCity(fileName)
                 result = True
-            except Exception, e:
-                print "FAILED TO LOAD META CITY", fileName
-                print str(e)
+            except Exception as e:
+                print("FAILED TO LOAD META CITY", fileName)
+                print(str(e))
                 result = False
-            print "RESULT", result
+            print("RESULT", result)
         elif response == gtk.RESPONSE_CANCEL:
-            print 'Closed, no files selected'
+            print('Closed, no files selected')
         dialog.destroy()
 
 
     def generateCity(self):
-        print "GENERATECITY"
+        print("GENERATECITY")
         self.engine.generateNewMetaCity()
 
 
     def playCity(self):
-        print "PLAYCITY"
+        print("PLAYCITY")
         self.engine.setSpeed(2)
         self.engine.setPasses(1)
         self.engine.resume()
@@ -376,23 +376,23 @@ class MicropolisPanedWindow(gtk.Window):
 
 
     def startMode(self):
-        print "STARTMODE"
+        print("STARTMODE")
         self.engine.setGameMode('start')
 
 
     def playMode(self):
-        print "PLAYMODE"
+        print("PLAYMODE")
         self.engine.setGameMode('play')
 
 
     def aboutDialog(self):
-        print "ABOUT DIALOG"
+        print("ABOUT DIALOG")
 
         def handleEmail(dialog, link, data):
-            print "HANDLE EMAIL", dialog, link, data
+            print("HANDLE EMAIL", dialog, link, data)
 
         def handleUrl(dialog, link, data):
-            print "HANDLE EMAIL", dialog, link, data
+            print("HANDLE EMAIL", dialog, link, data)
 
         engine = self.engine
         dialog = gtk.AboutDialog()
@@ -418,23 +418,23 @@ class MicropolisPanedWindow(gtk.Window):
 
     def saveCityDialog(self):
         # @todo "Save city" dialog.
-        print "SAVE CITY DIALOG"
+        print("SAVE CITY DIALOG")
 
 
     def saveCityAsDialog(self):
         # @todo "Save city as..." dialog.
-        print "SAVE CITY AS DIALOG"
+        print("SAVE CITY AS DIALOG")
 
 
     def newCityDialog(self):
         # @todo "Are you sure you want to start a new game?" dialog.
-        print "NEW CITY DIALOG"
+        print("NEW CITY DIALOG")
         self.startGame()
 
 
     def quitDialog(self):
         # @todo "Are you sure you want to quit?" dialog.
-        print "QUIT DIALOG"
+        print("QUIT DIALOG")
 
 
     def centerOnTileHandler(
@@ -458,7 +458,7 @@ class MicropolisPanedWindow(gtk.Window):
         winWidth = winRect.width
         winHeight = winRect.height
 
-        print "WINDOW SIZE", winWidth, winHeight
+        print("WINDOW SIZE", winWidth, winHeight)
 
         extra = 4
         padding = 14
@@ -500,13 +500,13 @@ class MicropolisPanedWindow(gtk.Window):
 
     def createWindowNotebook(self, otherNotebook, notebook, page, x, y):
 
-        print "createWindowNotebook", otherNotebook, notebook, page, x, y
+        print("createWindowNotebook", otherNotebook, notebook, page, x, y)
 
         parent = page.get_parent()
-        print "parent", parent, parent == self.notebook1, parent == self.notebook2, parent == self.notebook3
+        print("parent", parent, parent == self.notebook1, parent == self.notebook2, parent == self.notebook3)
 
         for n in (self.notebook1, self.notebook2, self.notebook3):
-            print n
+            print(n)
 
         if parent == self.notebook1:
             return self.notebook2

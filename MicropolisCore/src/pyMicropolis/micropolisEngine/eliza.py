@@ -13,8 +13,8 @@ import random
 
 class eliza:
   def __init__(self):
-    self.keys = map(lambda x:re.compile(x[0], re.IGNORECASE),gPats)
-    self.values = map(lambda x:x[1],gPats)
+    self.keys = [re.compile(x[0], re.IGNORECASE) for x in gPats]
+    self.values = [x[1] for x in gPats]
 
   #----------------------------------------------------------------------
   # translate: take a string, replace any words found in dict.keys()
@@ -22,7 +22,7 @@ class eliza:
   #----------------------------------------------------------------------
   def translate(self,str,dict):
     words = string.split(string.lower(str))
-    keys = dict.keys();
+    keys = list(dict.keys());
     for i in range(0,len(words)):
       if words[i] in keys:
         words[i] = dict[words[i]]
@@ -300,20 +300,20 @@ gPats = [
 #  command_interface
 #----------------------------------------------------------------------
 def command_interface():
-  print "Therapist\n---------"
-  print "Talk to the program by typing in plain English, using normal upper-"
-  print 'and lower-case letters and punctuation.  Enter "quit" when done.'
-  print '='*72
-  print "Hello.  How are you feeling today?"
+  print("Therapist\n---------")
+  print("Talk to the program by typing in plain English, using normal upper-")
+  print('and lower-case letters and punctuation.  Enter "quit" when done.')
+  print('='*72)
+  print("Hello.  How are you feeling today?")
   s = ""
   therapist = eliza();
   while s != "quit":
-    try: s = raw_input(">")
+    try: s = input(">")
     except EOFError:
       s = "quit"
-      print s
+      print(s)
     while s[-1] in "!.": s = s[:-1]
-    print therapist.respond(s)
+    print(therapist.respond(s))
 
 
 if __name__ == "__main__":

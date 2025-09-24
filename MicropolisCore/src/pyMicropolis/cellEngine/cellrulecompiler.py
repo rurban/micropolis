@@ -64,7 +64,7 @@
 # Cellular Automata Engine Rule Compiler, by Don Hopkins.
 
 
-import sys, os, thread, time
+import sys, os, _thread, time
 
 
 ########################################################################

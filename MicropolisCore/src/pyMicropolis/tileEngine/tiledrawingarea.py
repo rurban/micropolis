@@ -1027,7 +1027,7 @@ class TileDrawingArea(gtk.DrawingArea):
 
 
     def selectToolByName(self, toolName):
-        print "selectToolByName", toolName
+        print("selectToolByName", toolName)
 
         tool = tiletool.TileTool.getToolByName(toolName)
 
@@ -1211,7 +1211,7 @@ class TileDrawingArea(gtk.DrawingArea):
         widget,
         event):
 
-        print "handleButtonPress TileDrawingArea", self
+        print("handleButtonPress TileDrawingArea", self)
 
         #print "EVENT", event
         #print dir(event)
