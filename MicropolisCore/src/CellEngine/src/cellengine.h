@@ -385,21 +385,15 @@ public:
 	PyObject *buf,
 	int neigh)
     {
-        char *buffer =
-            NULL;
-        Py_ssize_t len =
-            0;
-
-        PyObject_AsReadBuffer(
-            buf,
-            (const void **)&buffer,
-            &len);
+        Py_buffer pybuf;
+        PyObject_GetBuffer(buf, &pybuf, PyBUF_SIMPLE);
 
         self->SetRuleTable(
-            buffer, 
-            (int)len, 
+            (char *)pybuf.buf,
+            (int)pybuf.len,
             neigh);
 
+        PyBuffer_Release(&pybuf);
     }
 
 

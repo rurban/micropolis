@@ -281,21 +281,20 @@ void TileEngine::renderTiles(
 
     const int *tileMapData = NULL;
     unsigned int tileMapCount = 0;
+    Py_buffer buf;
 
     if (tileMap != Py_None) {
 	tileMapCount = (unsigned int)PySequence_Size(tileMap);
-	Py_ssize_t tileMapLength = 0;
-	if (PyObject_AsReadBuffer( 
-	    tileMap,
-	    (const void **)&tileMapData,
-	    &tileMapLength) != 0) {
+	if (PyObject_GetBuffer(tileMap, &buf, PyBUF_SIMPLE) != 0) {
 	    PyErr_SetString(
 		PyExc_TypeError,
 		"expected tileMap with read buffer");
 	    return;
 	}
+	Py_ssize_t tileMapLength = buf.len;
+	tileMapData = (int *)buf.buf;
 
-	int tileMapDataCount = 
+	int tileMapDataCount =
 	    (int)tileMapLength / sizeof(unsigned int);
 
 	if (tileMapDataCount != (int)tileMapCount) {
@@ -371,6 +370,7 @@ void TileEngine::renderTiles(
 
 	}
     }
+    PyBuffer_Release(&buf);
 }
 
 
@@ -402,6 +402,7 @@ void TileEngine::renderTilesLazy(
 
     const int *tileMapData = NULL;
     unsigned int tileMapCount = 0;
+    Py_buffer buf;
 
     if (tileMap != Py_None) {
 
@@ -414,16 +415,14 @@ void TileEngine::renderTilesLazy(
 	}
 
 	tileMapCount = (unsigned int)PySequence_Size(tileMap);
-	Py_ssize_t tileMapLength = 0;
-	if (PyObject_AsReadBuffer(
-	    tileMap,
-	    (const void **)&tileMapData,
-	    &tileMapLength) != 0) {
+	if (PyObject_GetBuffer(tileMap, &buf, PyBUF_SIMPLE) != 0) {
 	    PyErr_SetString(
 		PyExc_TypeError,
 		"expected tileMap with read buffer");
 	    return;
 	}
+	Py_ssize_t tileMapLength = buf.len;
+	tileMapData = (int *)buf.buf;
 
 	int tileMapDataCount = 
 	    (int)tileMapLength / sizeof(unsigned int);
@@ -450,18 +449,14 @@ void TileEngine::renderTilesLazy(
     // tile.  The first is a "cached" flag, the second is a surface
     // index, the 3rd and 4th are a tileX and tileY position.
 
-    int *tileCacheData = NULL;
-    Py_ssize_t tileCacheLength = 0;
-
-    if (PyObject_AsWriteBuffer(
-	tileCache,
-	(void **)&tileCacheData,
-	&tileCacheLength) != 0) {
+    if (PyObject_GetBuffer(tileCache, &buf, PyBUF_SIMPLE|PyBUF_WRITABLE) != 0) {
 	PyErr_SetString(
 	    PyExc_TypeError,
 	    "expected tileCache array");
 	return;
     }
+    int *tileCacheData = (int *)buf.buf;
+    //Py_ssize_t tileCacheDataLength = buf.len;
 
     // The tileCacheSurfaces parameters should be a list of Cairo
     // surfaces.
@@ -632,6 +627,7 @@ void TileEngine::renderTilesLazy(
 	    cairo_restore(ctx);
 	}
     }
+    PyBuffer_Release(&buf);
 }
 
 
@@ -656,6 +652,7 @@ void TileEngine::renderPixels(
     // The tileMap should be None, or an array of 4 byte integers,
     // mapping virtual tiles indices to absolute tile numbers.
 
+    Py_buffer buf;
     const int *tileMapData = NULL;
     unsigned int tileMapCount = 0;
 
@@ -670,16 +667,14 @@ void TileEngine::renderPixels(
 	}
 
 	tileMapCount = (unsigned int)PySequence_Size(tileMap);
-	Py_ssize_t tileMapLength = 0;
-	if (PyObject_AsReadBuffer(
-	    tileMap,
-	    (const void **)&tileMapData,
-	    &tileMapLength) != 0) {
+	if (PyObject_GetBuffer(tileMap, &buf, PyBUF_SIMPLE) != 0) {
 	    PyErr_SetString(
 		PyExc_TypeError,
 		"expected tileMap with read buffer");
 	    return;
 	}
+	tileMapData = (const int *)buf.buf;
+	Py_ssize_t tileMapLength = buf.len;
 
 	int tileMapDataCount = 
 	    (int)tileMapLength / sizeof(unsigned int);
@@ -730,6 +725,7 @@ void TileEngine::renderPixels(
 	    *(long *)destPixel = *(long *)sourcePixel;
 	}
     }
+    PyBuffer_Release(&buf);
 }
 
 
@@ -752,6 +748,7 @@ PyObject *TileEngine::getTileData(
 	return Py_None;
     }
 
+    Py_buffer pybuf;
     const int *tileMapData = NULL;
     unsigned int tileMapCount = 0;
 
@@ -767,19 +764,17 @@ PyObject *TileEngine::getTileData(
 	}
 
 	tileMapCount = (unsigned int)PySequence_Size(tileMap);
-	Py_ssize_t tileMapLength = 0;
-	if (PyObject_AsReadBuffer(
-	    tileMap,
-	    (const void **)&tileMapData,
-	    &tileMapLength) != 0) {
+	if (PyObject_GetBuffer(tileMap, &pybuf, PyBUF_SIMPLE) != 0) {
 	    PyErr_SetString(
 		PyExc_TypeError,
 		"expected tileMap with read buffer");
 	    Py_INCREF(Py_None);
 	    return Py_None;
 	}
+	tileMapData = (const int *)pybuf.buf;
+	Py_ssize_t tileMapLength = pybuf.len;
 
-	int tileMapDataCount = 
+	int tileMapDataCount =
 	    (int)tileMapLength / sizeof(unsigned int);
 
 	if (tileMapDataCount != (int)tileMapCount) {
@@ -797,18 +792,16 @@ PyObject *TileEngine::getTileData(
     if (tileViewCache != Py_None) {
 	tileViewCacheCount =
 	    (unsigned int)PySequence_Size(tileViewCache);
-	Py_ssize_t tileViewCacheLength = 0;
+
 	if ((tileViewCacheCount != (width * height)) ||
-	    (PyObject_AsWriteBuffer(
-	       tileViewCache,
-	       (void **)&tileViewCacheData,
-	       &tileViewCacheLength) != 0)) {
+	    (PyObject_GetBuffer(tileViewCache, &pybuf, PyBUF_SIMPLE|PyBUF_WRITABLE) != 0)) {
 	    PyErr_SetString(
 		PyExc_TypeError,
 		"expected tileViewCache with write buffer");
 	    Py_INCREF(Py_None);
 	    return Py_None;
 	}
+	tileViewCacheData = (int*)pybuf.buf;
     }
 
     const char *textCodeString =
@@ -1058,19 +1051,10 @@ PyObject *TileEngine::getTileData(
     PyObject *result;
 
     if (returnBuffer) {
-	result =
-	    PyTuple_New(bufSize);
-        unsigned char *destBuf = NULL;
-        Py_ssize_t destSize = 0;
-	PyObject_AsWriteBuffer(
-	    result,
-	    (void **)&destBuf,
-	    &destSize);
-	assert(destSize == bufSize);
-	memcpy(
-	    destBuf,
-	    buf,
-	    destSize);
+	result = PyTuple_New(bufSize);
+	PyObject_GetBuffer(result, &pybuf, PyBUF_WRITABLE);
+	assert(pybuf.len == bufSize);
+	memcpy(pybuf.buf, buf, pybuf.len);
     } else {
 	result =
 	    PyBytes_FromStringAndSize(
@@ -1079,6 +1063,7 @@ PyObject *TileEngine::getTileData(
     }
 
     free(buf);
+    PyBuffer_Release(&pybuf);
 
     return result;
 }

@@ -92,7 +92,7 @@ CELLENGINE: build_python
 build_python: objs/$(PYTHONBUILDDIR)/_cellengine.so
 
 objs/$(PYTHONBUILDDIR)/_cellengine.so: build_swig setup.py $(SOURCES) $(HEADERS)
-	mkdir -p "objs/$(PYTHONBUILDDIR)"
+	-mkdir -p "objs/$(PYTHONBUILDDIR)"
 	$(PYTHON) setup.py build --build-base=objs
 
 # ----------------------------------------------------------------------
@@ -106,6 +106,7 @@ objs/$(PYTHONBUILDDIR)/_cellengine.so: build_swig setup.py $(SOURCES) $(HEADERS)
 build_swig: objs/cellengine_wrap.cpp
 
 objs/cellengine_wrap.cpp: swig/cellengine.i swig/cellengine-swig-python.i $(HEADERS)
+	-mkdir -p objs
 	$(SWIG) -python -c++ -Isrc -Wall \
 	        -outdir objs \
 	        -o objs/cellengine_wrap.cpp \
