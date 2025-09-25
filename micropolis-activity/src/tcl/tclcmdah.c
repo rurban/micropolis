@@ -20,6 +20,7 @@ static char rcsid[] = "$Header: /user6/ouster/tcl/RCS/tclCmdAH.c,v 1.76 92/07/06
 #endif
 
 #include "tclint.h"
+#include <stdint.h>
 
 
 /*
@@ -886,7 +887,7 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	    if (useTwoWords) {
 		sprintf(dst+dstSize, newFormat, twoWordValue);
 	    } else if (useShort) {
-	        int tmp = (int)oneWordValue;
+	        int tmp = (uintptr_t)oneWordValue & 0xFFFF;
 		sprintf(dst+dstSize, newFormat, (short)tmp);
 	    } else {
 		sprintf(dst+dstSize, newFormat, oneWordValue);

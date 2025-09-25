@@ -119,10 +119,11 @@ static int
 ReturnFPMathError (interp)
     Tcl_Interp *interp;
 {
-    char *errorMsg;
+    char *errorMsg = "unknown matherr";
 
     switch (G_errorType) {
-       case DOMAIN: 
+        /*
+       case DOMAIN:
            errorMsg = "domain";
            break;
        case SING:
@@ -138,6 +139,7 @@ ReturnFPMathError (interp)
        case PLOSS:
            errorMsg = "loss of significance";
            break;
+        */
     }
     Tcl_AppendResult (interp, "floating point ", errorMsg, " error",
                       (char *) NULL);
